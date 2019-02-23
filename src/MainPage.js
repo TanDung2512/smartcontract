@@ -385,8 +385,8 @@ class mainPage extends Component{
                         </Button>
 
 
-                    </Paper>
-                    <Review sendList = {this.state.sendList} deleteTransaction = {this.deleteTransaction}/>
+                    </Paper >
+                    <Review stateAccountList = {this.state.stateAccountList} sendList= {this.state.sendList} deleteTransaction = {this.deleteTransaction}/>
                     <Button variant="contained" color="primary" className={classes.button} onClick={this.handleChange("send")}>
                         Send
                     </Button>

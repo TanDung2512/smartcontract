@@ -6,8 +6,12 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Typography from '@material-ui/core/Typography';
+
 const styles = theme => ({
     root: {
         margin : "auto",
@@ -16,7 +20,11 @@ const styles = theme => ({
         paddingBottom: theme.spacing.unit * 2,
         paddingLeft: theme.spacing.unit * 2,
         paddingRight: theme.spacing.unit * 2,
-        width : "400px"
+        width : "80%"
+    },
+    heading: {
+        fontSize: theme.typography.pxToRem(15),
+        fontWeight: theme.typography.fontWeightRegular,
     },
 });
 
@@ -52,11 +60,21 @@ class Review extends React.Component {
                 <Paper className = {classes.root}>
                     <List dense >
                         {this.props.sendList !== [] && this.props.sendList.map(value => (
-                            <Tooltip title={this.printInfo(value)}>
-                            <ListItem key ={value} button>
-                               <ListItemText primary={value.type } />
-                            </ListItem>
-                            </Tooltip>
+                            <ExpansionPanel>
+                                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography className={classes.heading}>{value.type}</Typography>
+                                </ExpansionPanelSummary>
+                                <ExpansionPanelDetails>
+                                        {this.props.stateAccountList.map(account => {
+                                            if (account.addressAccount !== "none"){
+                                            return (
+                                            <Typography variant="h5" gutterBottom>
+                                                {account.addressAccount + " " + account.ether + " " + account.Token.name + " " +account.Token.amount + " | "}
+                                            </Typography>
+                                        )}})}
+                                </ExpansionPanelDetails>
+                            </ExpansionPanel>
+
                         ))}
                     </List>
                 </Paper>
