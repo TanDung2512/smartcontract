@@ -15,7 +15,7 @@ import Typography from '@material-ui/core/Typography';
 const styles = theme => ({
     root: {
         margin : "auto",
-        marginTop : theme.spacing.unit * 10,
+        marginTop : theme.spacing.unit * 2,
         paddingTop: theme.spacing.unit * 2,
         paddingBottom: theme.spacing.unit * 2,
         paddingLeft: theme.spacing.unit * 2,
@@ -32,52 +32,31 @@ class Review extends React.Component {
 
     constructor(props){
         super(props);
-        this.state = {
-            checked : "",
-        }
-    }
-    // handleToggle = value => () => {
-    //     const currentIndex = this.state.checked.indexOf(value);
-    //     const newChecked = [...this.state.checked];
-    //     if (currentIndex === -1 ) {
-    //         newChecked.push(value);
-    //     }
-    //     else {
-    //         newChecked.splice(currentIndex,1);
-    //     }
-    //     this.setState({checked : newChecked});
-    // };
 
-    printInfo = (value) => {
-        return value.senderAddress + " " +
-            value.receiverAddress + " " +
-            value.amount + " ";
-    };
+    }
     render() {
         const {classes} = this.props;
         return (
             <React.Fragment>
-                <Paper className = {classes.root}>
                     <List dense >
-                        {this.props.sendList !== [] && this.props.sendList.map(value => (
+                        {this.props.responseState !== [] && this.props.responseState.map(value => (
                             <ExpansionPanel>
                                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography className={classes.heading}>{value.type}</Typography>
+                                    <Typography className={classes.heading}>{value.transaction}</Typography>
                                 </ExpansionPanelSummary>
-                                <ExpansionPanelDetails>
-                                        {this.props.stateAccountList.map(account => {
-                                            if (account.addressAccount !== "none"){
+                                <ExpansionPanelDetails >
+                                        {value.account_state.map(account => {
+
                                             return (
-                                            <Typography variant="h5" gutterBottom>
-                                                {account.addressAccount + " " + account.ether + " " + account.Token.name + " " +account.Token.amount + " | "}
+                                            <Typography variant="h8" gutterBottom>
+                                                {"[ " + account.name + " " + account.ether  + " " +account.token + "] " }
                                             </Typography>
-                                        )}})}
+                                        )})}
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
 
                         ))}
                     </List>
-                </Paper>
             </React.Fragment>
         );
     }

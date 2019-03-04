@@ -4,12 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
-import classNames from 'classnames';
-import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import Review from './Review.js';
-import Icon from '@material-ui/core/Icon';
-
+import axios from 'axios';
 const styles = theme =>( {
     root: {
         margin : "auto",
@@ -53,47 +50,17 @@ const styles = theme =>( {
 
 });
 
-const ranges = [
-    {
-        value : 'send Ether',
-        label : 'send Ether',
-    },
-    {
-        value : 'send Token',
-        label : 'send Token',
-    }
-];
-
 
 class mainPage extends Component{
     constructor(props){
         super(props);
         this.historyState = [];
         this.state = {
-            stateAccountList : [{
-                addressAccount: "none",
-                ether : 0 ,
-                Token : {
-                    name : "none",
-                    amount : 0,
-                }
-            }
-            ],
-            addressAccount : "",
-            weightRange : '',
-            amount : 0,
-            token : "",
-            ABISM : "",
-            sender : "None",
-            receiver : "None",
-            sendList : [],
-            //type : "send Ether" || "send Token"
-            //senderAddress : ""
-            //receiveAddres : ""
-            //nameToken : ""
-            //amount : 1
+            contextTransactions : '',
+            responseState : [],
         }
-    }
+
+    };
     handleChange = prop => event => {
         if (prop === "send"){
             this.setState(state  => {
@@ -174,28 +141,17 @@ class mainPage extends Component{
         console.log(this.state);
     };
 
-    handleAdd = prop => () => {
-        if (prop === "add" && this.state.addressAccount !== "") {
-            this.setState(state => {
-                const listAccount = state.stateAccountList.push(
-                    {
-                        addressAccount: this.state.addressAccount,
-                        ether: 100,
-                        Token: {
-                            name: "BKHCM",
-                            amount: 100,
-                        },
-                    }
-                );
-                return {
-                    listAccount
+    callAjax = () => {
+        if (this.state.contextTransactions !== ""){
+            axios.get('http://172.16.10.86:3001/input',{
+                params: {
+                    contextTransactions : this.state.contextTransactions
                 }
-            });
-            this.setState({addressAccount : ""}) ;
+            }).then(res => {
+                console.log(res.data[0]);
+                this.setState({"responseState" : res.data});
+            })
         }
-    };
-
-    deleteTransaction = () => {
 
     };
     render(){
@@ -220,177 +176,26 @@ class mainPage extends Component{
                         variant ="outlined"
                     />
                     <TextField
-                        id="address"
-                        label="address"
-                        value = {this.state.addressAccount}
-                        onChange={this.handleChange('addressAccount')}
+                        id="Transaction"
+                        label="Transaction"
+                        value = {this.state.contextTransactions}
+                        onChange={this.handleChange('contextTransactions')}
+
+                        multiline = "true"
+
                         className={classes.textField}
                         margin = "normal"
                         variant ="outlined"
                     />
-                    <Button variant="contained" color="primary" className={classes.button} onClick={this.handleAdd("add")}>
-                        <Icon className={classes.rightIcon}>+</Icon>
+                    <br/>
+                    <Button variant="contained" color="primary" className={classes.button} onClick={this.callAjax}>
+                    Send
                     </Button>
                 </form>
-                    <TextField
-                        select
-                        label="Type of transaction"
-                        className ={classNames(classes.margin,classes.textField)}
-                        value={this.state.weightRange}
-                        onChange = {this.handleChange('weightRange')}
-                    >
-                        {
-                            ranges.map(option => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))
-                        }
-                    </TextField>
-                    <Paper className={classNames(classes.layoutTransaction)}>
-                        { this.state.weightRange !== "" ?  this.state.weightRange === "send Ether" ? (
-                            <form>
+                    <Review responseState = {this.state.responseState} />
 
-                                <TextField
-                                    id="sender input"
-                                    select
-                                    className={classes.textField}
-                                    value={this.state.sender}
-                                    onChange={this.handleChange('sender')}
-                                    SelectProps={{
-                                        native: true,
-                                        MenuProps: {
-                                            className: classes.menu,
-                                        },
-                                    }}
-                                    helperText="Choose sender's address "
-                                    margin="normal"
-                                >
-                                    {this.state.stateAccountList.map(option => (
-                                        <option key={option.addressAccount} value={option.addressAccount}>
-                                            {option.addressAccount}
-                                        </option>
-                                    ))}
-                                </TextField>
-
-                                <TextField
-                                    id="receiver input"
-                                    select
-                                    className={classes.textField}
-                                    value={this.state.receiver}
-                                    onChange={this.handleChange('receiver')}
-                                    SelectProps={{
-                                        native: true,
-                                        MenuProps: {
-                                            className: classes.menu,
-                                        },
-                                    }}
-                                    helperText="Choose receiver's address"
-                                    margin="normal"
-                                >
-                                    {this.state.stateAccountList.map(option => (
-                                        <option key={option.addressAccount} value={option.addressAccount}>
-                                            {option.addressAccount}
-                                        </option>
-                                    ))}
-                                </TextField>
-
-
-                            <TextField
-                                id="outlined-number"
-                                label="amount"
-                                value={this.state.amount}
-                                onChange={this.handleChange('amount')}
-                                type="number"
-                                className={classes.textField}
-                                InputLabelProps={{
-                                    shrink: true,
-                                }}
-                                margin="normal"
-                                variant="outlined"
-                            />
-                        </form>) : (
-                            <form>
-                                <TextField
-                                    id="sender input"
-                                    select
-                                    className={classes.textField}
-                                    value={this.state.sender}
-                                    onChange={this.handleChange('sender')}
-                                    SelectProps={{
-                                        native: true,
-                                        MenuProps: {
-                                            className: classes.menu,
-                                        },
-                                    }}
-                                    helperText="Choose sender's address "
-                                    margin="normal"
-                                >
-                                    {this.state.stateAccountList.map(option => (
-                                        <option key={option.addressAccount} value={option.addressAccount}>
-                                            {option.addressAccount}
-                                        </option>
-                                    ))}
-                                </TextField>
-
-                                <TextField
-                                    id="receiver input"
-                                    select
-                                    className={classes.textField}
-                                    value={this.state.receiver}
-                                    onChange={this.handleChange('receiver')}
-                                    SelectProps={{
-                                        native: true,
-                                        MenuProps: {
-                                            className: classes.menu,
-                                        },
-                                    }}
-                                    helperText="Choose receiver's address"
-                                    margin="normal"
-                                >
-                                    {this.state.stateAccountList.map(option => (
-                                        <option key={option.addressAccount} value={option.addressAccount}>
-                                            {option.addressAccount}
-                                        </option>
-                                    ))}
-                                </TextField>
-
-                                <TextField
-                                    id="Token"
-                                    label="Token"
-                                    value ={this.state.token}
-                                    className={classes.textField}
-                                    onChange={this.handleChange('token')}
-                                    margin = "normal"
-                                    variant ="outlined"
-                                />
-                                <TextField
-                                    id="outlined-number"
-                                    label="amount"
-                                    value={this.state.amount}
-                                    onChange={this.handleChange('amount')}
-                                    type="number"
-                                    className={classes.textField}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    margin="normal"
-                                    variant="outlined"
-                                />
-
-                            </form>
-                        ) : <div/>}
-                        <Button variant="contained" color="primary" className={classes.button} onClick={this.handleChange("send")}>
-                            commit
-                        </Button>
-
-
-                    </Paper >
-                    <Review stateAccountList = {this.state.stateAccountList} sendList= {this.state.sendList} deleteTransaction = {this.deleteTransaction}/>
-                    <Button variant="contained" color="primary" className={classes.button} onClick={this.handleChange("send")}>
-                        Send
-                    </Button>
                 </Paper>
+
 
 
             </React.Fragment>
