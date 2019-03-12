@@ -20,11 +20,13 @@ const styles = theme => ({
         paddingBottom: theme.spacing.unit * 2,
         paddingLeft: theme.spacing.unit * 2,
         paddingRight: theme.spacing.unit * 2,
-        width : "80%"
+        width : "80%",
+        textAlign: "left",
     },
     heading: {
         fontSize: theme.typography.pxToRem(15),
         fontWeight: theme.typography.fontWeightRegular,
+        textAlign: "left",
     },
 });
 
@@ -42,13 +44,12 @@ class Review extends React.Component {
                         {this.props.responseState !== [] && this.props.responseState.map(value => (
                             <ExpansionPanel>
                                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                                    <Typography className={classes.heading}>{value.transaction}</Typography>
+                                    <Typography className={classes.heading}>{value.transaction.text}</Typography>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails >
                                         {value.account_state.map(account => {
-
                                             return (
-                                            <Typography variant="h8" gutterBottom>
+                                            <Typography variant="h8" gutterBottom className={classes.heading}>
                                                 {"[ " + account.name + " " + account.ether  + " " +account.token + "] " }
                                             </Typography>
                                         )})}
